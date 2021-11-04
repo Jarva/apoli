@@ -12,7 +12,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.FluidFillable;
 import net.minecraft.block.pattern.CachedBlockPosition;
 import net.minecraft.fluid.FluidState;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.state.property.Property;
 import net.minecraft.tag.Tag;
@@ -155,11 +155,11 @@ public class BlockConditions {
         register(new ConditionFactory<>(Apoli.identifier("nbt"), new SerializableData()
             .add("nbt", SerializableDataTypes.NBT),
             (data, block) -> {
-                NbtCompound nbt = new NbtCompound();
+                CompoundTag nbt = new CompoundTag();
                 if(block.getBlockEntity() != null) {
-                    nbt = block.getBlockEntity().writeNbt(nbt);
+                    nbt = block.getBlockEntity().toTag(nbt);
                 }
-                return NbtHelper.matches((NbtCompound)data.get("nbt"), nbt, true);
+                return NbtHelper.matches((CompoundTag)data.get("nbt"), nbt, true);
             }));
     }
 

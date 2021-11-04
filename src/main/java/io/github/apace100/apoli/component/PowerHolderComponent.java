@@ -96,7 +96,8 @@ public interface PowerHolderComponent extends AutoSyncedComponent, ServerTicking
     }
 
     static <T extends ValueModifyingPower> double modify(Entity entity, Class<T> powerClass, double baseValue, Predicate<T> powerFilter, Consumer<T> powerAction) {
-        if(entity instanceof LivingEntity living) {
+        if(entity instanceof LivingEntity) {
+            LivingEntity living = (LivingEntity)entity;
             PowerHolderComponent powerHolder = PowerHolderComponent.KEY.get(entity);
             List<T> powers = powerHolder.getPowers(powerClass);
             List<EntityAttributeModifier> mps = powers.stream()

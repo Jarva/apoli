@@ -1,6 +1,5 @@
 package io.github.apace100.apoli.power;
 
-import io.github.apace100.apoli.Apoli;
 import io.github.apace100.calio.mixin.DamageSourceAccessor;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -8,8 +7,8 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.Difficulty;
 
 import java.util.Map;
@@ -99,16 +98,17 @@ public class DamageOverTimePower extends Power {
     }
 
     @Override
-    public NbtElement toTag() {
-        NbtCompound nbt = new NbtCompound();
+    public Tag toTag() {
+        CompoundTag nbt = new CompoundTag();
         nbt.putInt("InDamage", inDamageTicks);
         nbt.putInt("OutDamage", outOfDamageTicks);
         return nbt;
     }
 
     @Override
-    public void fromTag(NbtElement tag) {
-        if(tag instanceof NbtCompound nbt) {
+    public void fromTag(Tag tag) {
+        if(tag instanceof CompoundTag) {
+            CompoundTag nbt = (CompoundTag)tag;
             inDamageTicks = nbt.getInt("InDamage");
             outOfDamageTicks = nbt.getInt("OutDamage");
         }

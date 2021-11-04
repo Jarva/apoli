@@ -30,7 +30,7 @@ import net.minecraft.loot.condition.LootCondition;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.ScoreboardObjective;
@@ -115,9 +115,9 @@ public class EntityConditions {
             .add("max_duration", SerializableDataTypes.INT, Integer.MAX_VALUE),
             (data, entity) -> {
                 StatusEffect effect = (StatusEffect)data.get("effect");
-                if(entity instanceof LivingEntity living) {
-                    if (living.hasStatusEffect(effect)) {
-                        StatusEffectInstance instance = living.getStatusEffect(effect);
+                if(entity instanceof LivingEntity) {
+                    if (((LivingEntity)entity).hasStatusEffect(effect)) {
+                        StatusEffectInstance instance = ((LivingEntity)entity).getStatusEffect(effect);
                         return instance.getDuration() <= data.getInt("max_duration") && instance.getDuration() >= data.getInt("min_duration")
                             && instance.getAmplifier() <= data.getInt("max_amplifier") && instance.getAmplifier() >= data.getInt("min_amplifier");
                     }
@@ -175,8 +175,8 @@ public class EntityConditions {
             .add("compare_to", SerializableDataTypes.DOUBLE),
             (data, entity) -> {
                 double attrValue = 0F;
-                if(entity instanceof LivingEntity living) {
-                    EntityAttributeInstance attributeInstance = living.getAttributeInstance((EntityAttribute) data.get("attribute"));
+                if(entity instanceof LivingEntity) {
+                    EntityAttributeInstance attributeInstance = ((LivingEntity)entity).getAttributeInstance((EntityAttribute) data.get("attribute"));
                     if(attributeInstance != null) {
                         attrValue = attributeInstance.getValue();
                     }
@@ -267,7 +267,8 @@ public class EntityConditions {
             .add("compare_to", SerializableDataTypes.FLOAT),
             (data, entity) -> {
                 float health = 0f;
-                if(entity instanceof LivingEntity living) {
+                if(entity instanceof LivingEntity) {
+                    LivingEntity living = (LivingEntity)entity;
                     health = living.getHealth() / living.getMaxHealth();
                 }
                 return ((Comparison)data.get("comparison")).compare(health, data.getFloat("compare_to"));
@@ -405,7 +406,8 @@ public class EntityConditions {
         }));
         register(new ConditionFactory<>(Apoli.identifier("using_item"), new SerializableData()
             .add("item_condition", ApoliDataTypes.ITEM_CONDITION, null), (data, entity) -> {
-            if(entity instanceof LivingEntity living) {
+            if(entity instanceof LivingEntity) {
+                LivingEntity living = (LivingEntity)entity;
                 if (living.isUsingItem()) {
                     ConditionFactory<ItemStack>.Instance condition = (ConditionFactory<ItemStack>.Instance) data.get("item_condition");
                     if (condition != null) {
@@ -428,7 +430,8 @@ public class EntityConditions {
             .add("calculation", SerializableDataTypes.STRING, "sum"),
             (data, entity) -> {
                 int value = 0;
-                if(entity instanceof LivingEntity le) {
+                if(entity instanceof LivingEntity) {
+                    LivingEntity le = (LivingEntity)entity;
                     Enchantment enchantment = (Enchantment)data.get("enchantment");
                     String calculation = data.getString("calculation");
                     switch(calculation) {
@@ -518,9 +521,9 @@ public class EntityConditions {
                     if(data.isPresent("bientity_condition")) {
                         Predicate<Pair<Entity, Entity>> condition = (Predicate<Pair<Entity, Entity>>) data.get("bientity_condition");
                         List<Entity> passengers = entity.getPassengerList();
-                        count = (int)passengers.stream().flatMap(Entity::streamSelfAndPassengers).filter(e -> condition.test(new Pair<>(e, entity))).count();
+                        count = (int)passengers.stream().flatMap(Entity::streamPassengersRecursively).filter(e -> condition.test(new Pair<>(e, entity))).count();
                     } else {
-                        count = (int)entity.getPassengerList().stream().flatMap(Entity::streamSelfAndPassengers).count();
+                        count = (int)entity.getPassengerList().stream().flatMap(Entity::streamPassengersRecursively).count();
                     }
                 }
                 return ((Comparison)data.get("comparison")).compare(count, data.getInt("compare_to"));
@@ -528,13 +531,13 @@ public class EntityConditions {
         register(new ConditionFactory<>(Apoli.identifier("nbt"), new SerializableData()
             .add("nbt", SerializableDataTypes.NBT),
             (data, entity) -> {
-                NbtCompound nbt = new NbtCompound();
-                entity.writeNbt(nbt);
-                return NbtHelper.matches((NbtCompound)data.get("nbt"), nbt, true);
+                CompoundTag nbt = new CompoundTag();
+                entity.toTag(nbt);
+                return NbtHelper.matches((CompoundTag)data.get("nbt"), nbt, true);
             }));
         register(new ConditionFactory<>(Apoli.identifier("exists"), new SerializableData(), (data, entity) -> entity != null));
         register(new ConditionFactory<>(Apoli.identifier("creative_flying"), new SerializableData(),
-            (data, entity) -> entity instanceof PlayerEntity && ((PlayerEntity)entity).getAbilities().flying));
+            (data, entity) -> entity instanceof PlayerEntity && ((PlayerEntity)entity).abilities.flying));
 
     }
 

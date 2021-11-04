@@ -69,7 +69,7 @@ public class InteractionPower extends Power {
             if(heldStack.isEmpty()) {
                 actor.setStackInHand(hand, resultingStack);
             } else {
-                actor.getInventory().offerOrDrop(resultingStack);
+                actor.inventory.offerOrDrop(actor.getEntityWorld(), resultingStack);
             }
         }
     }

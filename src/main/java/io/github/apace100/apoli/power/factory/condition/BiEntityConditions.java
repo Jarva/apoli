@@ -129,8 +129,8 @@ public class BiEntityConditions {
         ));
         register(new ConditionFactory<>(Apoli.identifier("attacker"), new SerializableData(),
             (data, pair) -> {
-                if(pair.getRight() instanceof LivingEntity living) {
-                    return living.getAttacker() == pair.getLeft();
+                if(pair.getRight() instanceof LivingEntity) {
+                    return ((LivingEntity)pair.getRight()).getAttacker() == pair.getLeft();
                 }
                 return false;
             }

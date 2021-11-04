@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 @Mixin(ItemStack.class)
 public class ItemStackMixin {
-    @Inject(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;hasNbt()Z", ordinal = 1), locals = LocalCapture.CAPTURE_FAILHARD)
+    @Inject(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;hasTag()Z", ordinal = 1), locals = LocalCapture.CAPTURE_FAILHARD)
     private void addEquipmentPowerTooltips(PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> cir, List<Text> list) {
         for(EquipmentSlot slot : EquipmentSlot.values()) {
             List<StackPowerUtil.StackPower> powers = StackPowerUtil.getPowers((ItemStack)(Object)this, slot)

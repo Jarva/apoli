@@ -99,18 +99,17 @@ public class OverlayPower extends Power {
                 RenderSystem.defaultBlendFunc();
                 break;
         }
-        RenderSystem.setShaderColor(g, h, k, a);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, texture);
+        RenderSystem.color4f(g, h, k, a);
+        client.getTextureManager().bindTexture(texture);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferBuilder = tessellator.getBuffer();
-        bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
+        bufferBuilder.begin(7, VertexFormats.POSITION_TEXTURE);
         bufferBuilder.vertex(m, n + l, -90.0D).texture(0.0F, 1.0F).next();
         bufferBuilder.vertex(m + e, n + l, -90.0D).texture(1.0F, 1.0F).next();
         bufferBuilder.vertex(m + e, n, -90.0D).texture(1.0F, 0.0F).next();
         bufferBuilder.vertex(m, n, -90.0D).texture(0.0F, 0.0F).next();
         tessellator.draw();
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.defaultBlendFunc();
         RenderSystem.disableBlend();
         RenderSystem.depthMask(true);

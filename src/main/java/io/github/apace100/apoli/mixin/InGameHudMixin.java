@@ -51,8 +51,8 @@ public class InGameHudMixin {
 
     @ModifyArg(
             method = "render",
-            at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderTexture(ILnet/minecraft/util/Identifier;)V", ordinal = 1),
-            index = 1
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/texture/TextureManager;bindTexture(Lnet/minecraft/util/Identifier;)V", ordinal = 1),
+            index = 0
     )
     public Identifier changeStatusBarTextures(Identifier original) {
         Optional<OverrideHudTexturePower> power = PowerHolderComponent.getPowers(this.client.player, OverrideHudTexturePower.class).stream().findFirst();
